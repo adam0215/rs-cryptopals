@@ -6,15 +6,13 @@ const INPUT: &[u8] = b"1b37373331363f78151b7f2b783431333d78397828372d363c78373e7
 fn main() {
     let decoded_hex = hex_decode(INPUT).unwrap();
 
-    let (key, _) = (0..=255)
-        .map(|i| {
-            let xored: Vec<_> = decoded_hex.iter().map(|ch| ch ^ i).collect();
+    let (key, _) = (0..=127)
+        .map(|ascii_char| {
+            let xored: Vec<_> = decoded_hex.iter().map(|ch| ch ^ ascii_char).collect();
             let scored = score_text(xored.as_slice());
 
-            (i, scored)
+            (ascii_char, scored)
         })
-        .collect::<HashMap<u8, usize>>()
-        .into_iter()
         .max_by(|a, b| a.1.cmp(&b.1))
         .unwrap();
 
